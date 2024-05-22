@@ -106,6 +106,7 @@ class JSONConverter01 {
 
         // GitPUSH誤操作検証用
         int n = 1;
+        int m = 2;
 
     }
 }
