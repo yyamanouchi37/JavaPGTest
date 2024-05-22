@@ -104,5 +104,8 @@ class JSONConverter01 {
 
         // 文字列「総数」を含む列番を抽出
 
+        // GitPUSH誤操作検証用
+        int n = 1;
+
     }
 }
