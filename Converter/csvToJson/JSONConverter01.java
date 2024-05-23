@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 // import java.util.stream.Stream;
+import java.util.Arrays;
 
 import Converter.Constants.GenericConstants;
 import Converter.FileHandling.FileHandling;
@@ -84,8 +85,21 @@ class JSONConverter01 {
 
                                 }
                                 brCount ++;
-                                System.out.println(br.readLine());
-                                // csvStrings.add(arr);
+                                String[] arr = br.readLine().split(",");
+
+                                // 空の配列を除外。
+                                if(arr.length == 0){
+                                    continue;
+                                }
+
+                                System.out.println(Arrays.toString(arr));
+
+                                // 合計列のindexを取得
+                                // 合計列を削除
+                                // 配列に再代入
+                                
+                                // 一時配列リストに代入
+                                csvStrings.add(arr);
                             };
 
                             brCount = 0;
@@ -93,9 +107,9 @@ class JSONConverter01 {
 
                         }
 
+                        // System.out.println(csvStrings);
                     }
-                    System.out.println(outputMap);
-                    // System.out.println(csvStrings);
+                    // System.out.println(outputMap);
                     outputMap.clear();
 
                 }
