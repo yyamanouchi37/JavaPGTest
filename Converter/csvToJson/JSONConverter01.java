@@ -58,37 +58,40 @@ class JSONConverter01 {
             File file = new File(dir);
             File[] subDir = file.listFiles();
 
-            if(subDir.length < 1) {
+            if (subDir.length < 1) {
                 // 都道府県名配下のディレクトリが存在しない
             }
 
-            for(int i = 0; i < subDir.length; i++){
+            for (int i = 0; i < subDir.length; i++) {
 
-                if(subDir[i].toString().contains("Populations")){
+                if (subDir[i].toString().contains("Populations")) {
 
                     File[] subSub = subDir[i].listFiles();
 
-                    for(int j = 0; j < subSub.length; j++){
+                    for (int j = 0; j < subSub.length; j++) {
 
                         // 出力用マップにキーを代入
                         outputMap.put(subSub[j].toString().split("_")[1].replace(".csv", ""), "");
 
                         // 一時退避リストにデータを代入
-                        try(BufferedReader br = new BufferedReader(
-                            new InputStreamReader(
-                                new FileInputStream(subSub[j])
-                        ));){
+                        try (BufferedReader br = new BufferedReader(
+                                new InputStreamReader(
+                                        new FileInputStream(subSub[j])));) {
 
-                            while(br.readLine() != null){
+                            while (br.readLine() != null) {
+
+                                if (br.readLine() == null) {
+                                    continue;
+                                }
 
                                 String[] arr = br.readLine().split(",");
 
                                 // 空の配列を除外。
-                                if(arr.length == 0){
+                                if (arr.length == 0) {
                                     continue;
                                 }
 
-                                System.out.println(Arrays.toString(arr));
+                                // System.out.println(Arrays.toString(arr));
 
                                 // 合計列のindexを取得
                                 // 合計列を削除
@@ -96,19 +99,20 @@ class JSONConverter01 {
 
                                 // 一時配列リストに代入
                                 csvStrings.add(arr);
-                                
-                            };
 
-                        } catch (IOException e){
+                            }
+                            ;
+
+                        } catch (IOException e) {
 
                         }
 
-                        // System.out.println(csvStrings);
                     }
-                    // System.out.println(outputMap);
+
                     outputMap.clear();
 
                 }
+                System.out.println(Arrays.toString(csvStrings.get(0)));
             }
         });
 
