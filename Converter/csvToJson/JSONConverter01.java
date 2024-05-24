@@ -78,13 +78,9 @@ class JSONConverter01 {
                             new InputStreamReader(
                                 new FileInputStream(subSub[j])
                         ));){
-                            int brCount = 0;
 
                             while(br.readLine() != null){
-                                if(brCount == 0){
 
-                                }
-                                brCount ++;
                                 String[] arr = br.readLine().split(",");
 
                                 // 空の配列を除外。
@@ -97,12 +93,12 @@ class JSONConverter01 {
                                 // 合計列のindexを取得
                                 // 合計列を削除
                                 // 配列に再代入
-                                
+
                                 // 一時配列リストに代入
                                 csvStrings.add(arr);
+                                
                             };
 
-                            brCount = 0;
                         } catch (IOException e){
 
                         }
