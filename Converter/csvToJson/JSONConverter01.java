@@ -26,25 +26,26 @@ class JSONConverter01 {
     // JSONディレクトリパス
     private static final Path JSON_DIR = GenericConstants.getWork().resolve(Paths.get(GenericConstants.JSON_DIR_NAME));
     // 都道府県名格納用リスト（ローマ字）
-    private static List<String> prefectures = new ArrayList<String>();
-    // CSVディレクトリ配下のディレクトリ絶対パス格納用
-    private static List<String> childCsvDirs = new ArrayList<String>();
+    private static List<String> prefectureList = new ArrayList<String>();
+    // 都道府県ディレクトリパス格納用リスト
+    private static List<String> prefectureDirList = new ArrayList<String>();
+    // 都道府県サブディレクトリパス格納用一時退避リスト
+    private static List<File[]> subDirList = new ArrayList<File[]>();
+    // CSV文字列格納用一時退避リスト
+    private static List<String[]> csvStringList = new ArrayList<String[]>();
     // 出力用ハッシュマップ
     private static HashMap<String, Object> outputMap = new HashMap<>();
-    // 一時退避リスト
-    private static List<String[]> csvStrings = new ArrayList<String[]>();
 
     /*
      * CSVデータからJSONデータを作成します。
      */
     public static void main(String[] args) {
 
-        FileHandling.getChildlenData(CSV_DIR, childCsvDirs, prefectures);
-        FileHandling.createDistinationFiles(prefectures, JSON_DIR, ".json");
-        prefectures.clear();
+        FileHandling.getChildlenData(CSV_DIR, prefectureDirList, prefectureList);
+        FileHandling.createDistinationFiles(prefectureList, JSON_DIR, ".json");
 
         // 年度を取得
-        childCsvDirs.forEach(dir -> {
+        prefectureDirList.forEach(dir -> {
 
             File file = new File(dir);
             File[] subDir = file.listFiles();
@@ -89,7 +90,7 @@ class JSONConverter01 {
                                 // 配列に再代入
 
                                 // 一時配列リストに代入
-                                csvStrings.add(arr);
+                                csvStringList.add(arr);
 
                             }
                             ;
@@ -103,7 +104,7 @@ class JSONConverter01 {
                     outputMap.clear();
 
                 }
-                System.out.println(Arrays.toString(csvStrings.get(0)));
+                System.out.println(Arrays.toString(csvStringList.get(0)));
             }
         });
 
