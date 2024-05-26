@@ -29,12 +29,14 @@ class JSONConverter01 {
     private static List<String> prefectureList = new ArrayList<String>();
     // 都道府県ディレクトリパス格納用リスト
     private static List<String> prefectureDirList = new ArrayList<String>();
-    // 都道府県サブディレクトリパス格納用一時退避リスト
+    // サブディレクトリ格納用リスト
     private static List<File[]> subDirList = new ArrayList<File[]>();
+    // 人口ファイルパス格納用リスト
+    private static List<File[]> populationDirList = new ArrayList<File[]>();
     // CSV文字列格納用一時退避リスト
-    private static List<String[]> csvStringList = new ArrayList<String[]>();
+    // private static List<String[]> csvStringList = new ArrayList<String[]>();
     // 出力用ハッシュマップ
-    private static HashMap<String, Object> outputMap = new HashMap<>();
+    // private static HashMap<String, Object> outputMap = new HashMap<>();
 
     /*
      * CSVデータからJSONデータを作成します。
@@ -43,71 +45,9 @@ class JSONConverter01 {
 
         FileHandling.getChildlenData(CSV_DIR, prefectureDirList, prefectureList);
         FileHandling.createDistinationFiles(prefectureList, JSON_DIR, ".json");
+        FileHandling.createDataFilePath(prefectureDirList, subDirList);
 
-        // 年度を取得
-        prefectureDirList.forEach(dir -> {
-
-            File file = new File(dir);
-            File[] subDir = file.listFiles();
-
-            if (subDir.length < 1) {
-                // 都道府県名配下のディレクトリが存在しない
-            }
-
-            for (int i = 0; i < subDir.length; i++) {
-
-                if (subDir[i].toString().contains("Populations")) {
-
-                    File[] subSub = subDir[i].listFiles();
-
-                    for (int j = 0; j < subSub.length; j++) {
-
-                        // 出力用マップにキーを代入
-                        outputMap.put(subSub[j].toString().split("_")[1].replace(".csv", ""), "");
-
-                        // 一時退避リストにデータを代入
-                        try (BufferedReader br = new BufferedReader(
-                                new InputStreamReader(
-                                        new FileInputStream(subSub[j])));) {
-
-                            while (br.readLine() != null) {
-
-                                if (br.readLine() == null) {
-                                    continue;
-                                }
-
-                                String[] arr = br.readLine().split(",");
-
-                                // 空の配列を除外。
-                                if (arr.length == 0) {
-                                    continue;
-                                }
-
-                                // System.out.println(Arrays.toString(arr));
-
-                                // 合計列のindexを取得
-                                // 合計列を削除
-                                // 配列に再代入
-
-                                // 一時配列リストに代入
-                                csvStringList.add(arr);
-
-                            }
-                            ;
-
-                        } catch (IOException e) {
-
-                        }
-
-                    }
-
-                    outputMap.clear();
-
-                }
-                System.out.println(Arrays.toString(csvStringList.get(0)));
-            }
-        });
-
+        System.out.println(Arrays.toString(subDirList.get(2)));
         // 文字列「総数」を含む列番を抽出
 
     }

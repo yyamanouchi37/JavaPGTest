@@ -5,6 +5,7 @@
 package Converter.FileHandling;
 
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,7 +22,7 @@ public class FileHandling {
     }
 
     /*
-     * 入力ディレクトリ直下の情報を取得します。
+     * データディレクトリ直下の情報を取得します。
      *
      * @param dir 読み込みルートディレクトリ
      *
@@ -31,7 +32,7 @@ public class FileHandling {
      */
     public static void getChildlenData(Path dir, List<String> childDirs, List<String> names) {
 
-        // CSVディレクトリ配下のディレクトリ名を転写
+        // データディレクトリ直下のディレクトリ名を転写
         try (Stream<Path> stream = Files.list(Paths.get(dir.toString()))) {
 
             stream.forEach(subDir -> {
@@ -77,6 +78,24 @@ public class FileHandling {
 
                 }
             }
+
+        });
+    }
+
+    /*
+     * データファイル取得元リストを生成
+     *
+     * @param input
+     *
+     * @param output
+     */
+    public static void createDataFilePath(List<String> input, List<File[]> output) {
+        input.forEach(dir -> {
+
+            File file = new File(dir);
+            File[] subDir = file.listFiles();
+
+            output.add(subDir);
 
         });
     }
