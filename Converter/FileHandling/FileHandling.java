@@ -87,15 +87,19 @@ public class FileHandling {
      *
      * @param input
      *
-     * @param output
+     * @param outputAll
+     * 
+     * @param
+     * 
+     * @param
      */
-    public static void createDataFilePath(List<String> input, List<File[]> output) {
+    public static void createDataFilePath(List<String> input, List<File[]> outputAll) {
         input.forEach(dir -> {
 
             File file = new File(dir);
             File[] subDir = file.listFiles();
 
-            output.add(subDir);
+            outputAll.add(subDir);
 
         });
     }

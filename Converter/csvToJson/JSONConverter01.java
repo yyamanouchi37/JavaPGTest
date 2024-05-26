@@ -31,8 +31,6 @@ class JSONConverter01 {
     private static List<String> prefectureDirList = new ArrayList<String>();
     // サブディレクトリ格納用リスト
     private static List<File[]> subDirList = new ArrayList<File[]>();
-    // 人口ファイルパス格納用リスト
-    private static List<File[]> populationDirList = new ArrayList<File[]>();
     // CSV文字列格納用一時退避リスト
     // private static List<String[]> csvStringList = new ArrayList<String[]>();
     // 出力用ハッシュマップ
