@@ -6,6 +6,7 @@ package Converter.csvToJson;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.nio.file.Files;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,6 +32,8 @@ class JSONConverter01 {
     private static List<String> prefectureDirList = new ArrayList<String>();
     // サブディレクトリ格納用リスト
     private static List<File[]> subDirList = new ArrayList<File[]>();
+    // 基準ファイルパス格納用リスト
+    private static List<File[]> baseFileList = new ArrayList<File[]>();
     // CSV文字列格納用一時退避リスト
     // private static List<String[]> csvStringList = new ArrayList<String[]>();
     // 出力用ハッシュマップ
@@ -44,24 +47,12 @@ class JSONConverter01 {
         FileHandling.getChildlenData(CSV_DIR, prefectureDirList, prefectureList);
         FileHandling.createDistinationFiles(prefectureList, JSON_DIR, ".json");
         FileHandling.createDataFilePath(prefectureDirList, subDirList);
+        FileHandling.createBaseFileList(subDirList, GenericConstants.POPULATION_DIR_NAME, baseFileList);// str代入部分は後に配列から取得する
 
-        // 人口データだけを取り出す
-        subDirList.forEach(dir -> {
-
-            for(int i = 0; i < dir.length - 1; i++){
-
-                if(dir[i].toString().contains(GenericConstants.POPULATION_DIR_NAME)){
-
-                    File[] files = dir[i].listFiles();
-                    System.out.println(Arrays.toString(files));
-                }
-
-            }
-            System.out.println("");
-
-        });
+        // リスト中にディレクトリが存在する場合、スキップ
 
         // 文字列「総数」を含む列番を抽出
 
+        System.out.println(Arrays.toString(baseFileList.get(1)));
     }
 }

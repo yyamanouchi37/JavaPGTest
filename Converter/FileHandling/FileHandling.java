@@ -106,4 +106,25 @@ public class FileHandling {
         });
     }
 
+    /*
+     * 基準ファイルパスリストの作成
+     */
+    public static void createBaseFileList(List<File[]> input, String str, List<File[]> output) {
+
+        input.forEach(dir -> {
+
+            for (int i = 0; i < dir.length - 1; i++) {
+
+                if (dir[i].toString().contains(str)) {
+
+                    File[] files = dir[i].listFiles();
+                    output.add(files);
+
+                }
+
+            }
+
+        });
+    }
+
 }
