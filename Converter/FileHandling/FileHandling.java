@@ -88,9 +88,9 @@ public class FileHandling {
      * @param input
      *
      * @param outputAll
-     * 
+     *
      * @param
-     * 
+     *
      * @param
      */
     public static void createDataFilePath(List<String> input, List<File[]> outputAll) {
@@ -99,7 +99,9 @@ public class FileHandling {
             File file = new File(dir);
             File[] subDir = file.listFiles();
 
-            outputAll.add(subDir);
+            if (subDir != null) {
+                outputAll.add(subDir);
+            }
 
         });
     }

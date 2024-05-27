@@ -45,7 +45,22 @@ class JSONConverter01 {
         FileHandling.createDistinationFiles(prefectureList, JSON_DIR, ".json");
         FileHandling.createDataFilePath(prefectureDirList, subDirList);
 
-        System.out.println(Arrays.toString(subDirList.get(2)));
+        // 人口データだけを取り出す
+        subDirList.forEach(dir -> {
+
+            for(int i = 0; i < dir.length - 1; i++){
+
+                if(dir[i].toString().contains(GenericConstants.POPULATION_DIR_NAME)){
+
+                    File[] files = dir[i].listFiles();
+                    System.out.println(Arrays.toString(files));
+                }
+
+            }
+            System.out.println("");
+
+        });
+
         // 文字列「総数」を含む列番を抽出
 
     }

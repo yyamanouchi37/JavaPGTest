@@ -24,10 +24,10 @@ public class GenericConstants {
     public static final int TPH_ROWCOUNT = 2;
 
     // CSV配備ディレクトリ名
-    public static final String CSV_DIR_NAME = "TestDataCSV";
+    public static final String CSV_DIR_NAME = "Input";
 
     // JSON配備ディレクトリ名
-    public static final String JSON_DIR_NAME = "CreatedJSON";
+    public static final String JSON_DIR_NAME = "Output";
 
     // 人口ディレクトリ名
     public static final String POPULATION_DIR_NAME = "Populations";
