@@ -5,11 +5,14 @@
 package Converter.csvToJson;
 
 import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.File;
 import java.nio.file.Files;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ class JSONConverter01 {
     // 基準ファイルパス格納用リスト
     private static List<File[]> baseFileList = new ArrayList<File[]>();
     // CSV文字列格納用一時退避リスト
-    // private static List<String[]> csvStringList = new ArrayList<String[]>();
+    private static List<String[]> csvStringList = new ArrayList<String[]>();
     // 出力用ハッシュマップ
     // private static HashMap<String, Object> outputMap = new HashMap<>();
 
@@ -50,9 +53,34 @@ class JSONConverter01 {
         FileHandling.createBaseFileList(subDirList, GenericConstants.POPULATION_DIR_NAME, baseFileList);// str代入部分は後に配列から取得する
 
         // リスト中にディレクトリが存在する場合、スキップ
+        baseFileList.forEach(file -> {
 
+            for(int i = 0; i < file.length; i++){
+
+                try(BufferedReader br = new BufferedReader(new FileReader(file[i]))) {
+
+                    String line = br.readLine();
+
+                    while(line != null){
+
+                        String[] row = line.split(",");
+                        csvStringList.add(row);
+                        // System.out.println(Arrays.toString(row));
+                        line = br.readLine();
+
+                    }
+                    br.close();
+
+                } catch (IOException e) {
+
+                    e.printStackTrace();
+
+                }
+
+            }
+        });
+        System.out.println(Arrays.toString(csvStringList.get(810)));
         // 文字列「総数」を含む列番を抽出
 
-        System.out.println(Arrays.toString(baseFileList.get(1)));
     }
 }

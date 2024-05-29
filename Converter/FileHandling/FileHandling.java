@@ -113,7 +113,7 @@ public class FileHandling {
 
         input.forEach(dir -> {
 
-            for (int i = 0; i < dir.length - 1; i++) {
+            for (int i = 0; i < dir.length; i++) {
 
                 if (dir[i].toString().contains(str)) {
 
