@@ -16,9 +16,10 @@ import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import Converter.Constants.GenericConstants;
 import Converter.FileHandling.FileHandling;
@@ -38,9 +39,13 @@ class JSONConverter01 {
     // 基準ファイルパス格納用リスト
     private static List<File[]> baseFileList = new ArrayList<File[]>();
     // CSV文字列格納用一時退避リスト
-    private static List<String[]> csvStringList = new ArrayList<String[]>();
-    // 出力用ハッシュマップ
-    // private static HashMap<String, Object> outputMap = new HashMap<>();
+    private static List<String> columnStringList = new ArrayList<String>();
+    // 出力用一時退避ハッシュマップ
+    private static HashMap<String, Object> outputMap = new LinkedHashMap<>();
+    // 行インデックスカウント
+    private static int rowIndex = -1;
+    // 削除列インデックス格納用リスト
+    private static List<Integer> deleteIndex = new ArrayList<Integer>();
 
     /*
      * CSVデータからJSONデータを作成します。
@@ -52,35 +57,80 @@ class JSONConverter01 {
         FileHandling.createDataFilePath(prefectureDirList, subDirList);
         FileHandling.createBaseFileList(subDirList, GenericConstants.POPULATION_DIR_NAME, baseFileList);// str代入部分は後に配列から取得する
 
-        // リスト中にディレクトリが存在する場合、スキップ
-        baseFileList.forEach(file -> {
+        baseFileList.forEach(path -> {
 
-            for(int i = 0; i < file.length; i++){
+            // 出力用ハッシュマップにキー(西暦年)を代入
+            for (int i = 0; i < path.length; i++) {
 
-                try(BufferedReader br = new BufferedReader(new FileReader(file[i]))) {
+                // 東京都
+                if (path[i].toString().contains("tokyo")) {
 
-                    String line = br.readLine();
+                    try (BufferedReader br = new BufferedReader(new FileReader(path[i]))) {
 
-                    while(line != null){
+                        rowIndex++;
+                        String line = br.readLine();
 
-                        String[] row = line.split(",");
-                        csvStringList.add(row);
-                        // System.out.println(Arrays.toString(row));
-                        line = br.readLine();
+                        // 行操作
+                        while (line != null) {
 
+                            String[] beforeArr = line.split(",");
+
+                            if (rowIndex == 0) {
+
+                                for (int j = 0; j < beforeArr.length; j++) {
+
+                                    // 削除列のインデックスを取得
+                                    if (beforeArr[j].contains("地域階層") || beforeArr[j].contains("総数")) {
+                                        deleteIndex.add(j);
+                                    }
+
+                                }
+
+                            }
+
+                            String[] deleteIndexies = deleteIndex.toArray(new String[deleteIndex.size()]);
+
+                            //
+                            for(int j = 0; j < beforeArr.length; j++){
+
+                                if(Arrays.toString(deleteIndexies).contains(String.valueOf(j))){
+                                    continue;
+                                }
+
+                                columnStringList.add(beforeArr[j]);
+                            }
+
+                        }
+
+                    } catch (FileNotFoundException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
                     }
-                    br.close();
-
-                } catch (IOException e) {
-
-                    e.printStackTrace();
 
                 }
 
+                // 西暦年を抽出
+                String key = path[i].toString()
+                        .split("/")[path[i].toString()
+                                .split("/").length - 1]
+                        .split("_")[1]
+                        .replace(".csv", "").trim();
+
+                outputMap.put(key, "");
             }
+
+            System.out.println("");
+            outputMap.keySet().forEach(str -> {
+
+                System.out.println(str);
+            });
+            // 一時退避マップの初期化
+            outputMap.clear();
+
         });
-        System.out.println(Arrays.toString(csvStringList.get(810)));
-        // 文字列「総数」を含む列番を抽出
 
     }
 }
