@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.LinkedHashMap;
 
 import Converter.Constants.GenericConstants;
@@ -38,14 +39,14 @@ class JSONConverter01 {
     private static List<File[]> subDirList = new ArrayList<File[]>();
     // 基準ファイルパス格納用リスト
     private static List<File[]> baseFileList = new ArrayList<File[]>();
-    // CSV文字列格納用一時退避リスト
-    private static List<String> columnStringList = new ArrayList<String>();
-    // 出力用一時退避ハッシュマップ
-    private static HashMap<String, Object> outputMap = new LinkedHashMap<>();
-    // 行インデックスカウント
-    private static int rowIndex = -1;
-    // 削除列インデックス格納用リスト
-    private static List<Integer> deleteIndex = new ArrayList<Integer>();
+    // アウトプットマップ （自治体名 = 取得年度格納用リスト）
+    private static LinkedHashMap<String, Object> outputMap = new LinkedHashMap<>();
+    // 取得年度格納用マップ （年度 = 邦人/外国人マップ）
+    private static LinkedHashMap<Integer, Object> layer1 = new LinkedHashMap<>();
+    // 年齢別人口マップ （性別 = 人口）
+    private static LinkedHashMap<String, Integer> Layer3 = new LinkedHashMap<>();
+    // CSV文字列一時退避リスト
+    private static List<String[]> inputRow = new ArrayList<String[]>();
 
     /*
      * CSVデータからJSONデータを作成します。
@@ -59,78 +60,37 @@ class JSONConverter01 {
 
         baseFileList.forEach(path -> {
 
-            // 出力用ハッシュマップにキー(西暦年)を代入
             for (int i = 0; i < path.length; i++) {
 
-                // 東京都
-                if (path[i].toString().contains("tokyo")) {
+                // 一時退避リストに行文字列を代入
+                try (BufferedReader br = new BufferedReader(new FileReader(path[i]))) {
 
-                    try (BufferedReader br = new BufferedReader(new FileReader(path[i]))) {
+                    String line = br.readLine();
+                    inputRow.add(line.split(","));
 
-                        rowIndex++;
-                        String line = br.readLine();
-
-                        // 行操作
-                        while (line != null) {
-
-                            String[] beforeArr = line.split(",");
-
-                            if (rowIndex == 0) {
-
-                                for (int j = 0; j < beforeArr.length; j++) {
-
-                                    // 削除列のインデックスを取得
-                                    if (beforeArr[j].contains("地域階層") || beforeArr[j].contains("総数")) {
-                                        deleteIndex.add(j);
-                                    }
-
-                                }
-
-                            }
-
-                            String[] deleteIndexies = deleteIndex.toArray(new String[deleteIndex.size()]);
-
-                            //
-                            for(int j = 0; j < beforeArr.length; j++){
-
-                                if(Arrays.toString(deleteIndexies).contains(String.valueOf(j))){
-                                    continue;
-                                }
-
-                                columnStringList.add(beforeArr[j]);
-                            }
-
-                        }
-
-                    } catch (FileNotFoundException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
                 }
 
-                // 西暦年を抽出
-                String key = path[i].toString()
-                        .split("/")[path[i].toString()
-                                .split("/").length - 1]
-                        .split("_")[1]
-                        .replace(".csv", "").trim();
+                // ヘッダー行から削除列のインデックスを取得
+                for (int j = 0; j < inputRow.size(); j++) {
 
-                outputMap.put(key, "");
+                    if (j == 0) {
+                        String[] row = inputRow.get(j);
+                        for(int k = 0; k < row.length; k++){
+                            if(row[k].contains("地域階層") || row[k].contains("総数")){
+
+                            }
+                        }
+                    }
+                }
+
+                String str = path[i].toString();
+                if (i == 0 && str.contains("tokyo") && str.contains("Population")) {
+
+                }
             }
-
-            System.out.println("");
-            outputMap.keySet().forEach(str -> {
-
-                System.out.println(str);
-            });
-            // 一時退避マップの初期化
-            outputMap.clear();
-
         });
-
     }
 }
