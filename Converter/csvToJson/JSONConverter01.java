@@ -47,6 +47,10 @@ class JSONConverter01 {
     private static LinkedHashMap<String, Integer> Layer3 = new LinkedHashMap<>();
     // CSV文字列一時退避リスト
     private static List<String[]> inputRow = new ArrayList<String[]>();
+    // 削除列インデックス格納リスト
+    private static List<Integer> deleteIndex = new ArrayList<Integer>();
+    // 削除列キーワード
+    private static List<String> delkwcol = Arrays.asList("地域階層", "総数");
 
     /*
      * CSVデータからJSONデータを作成します。
@@ -58,12 +62,16 @@ class JSONConverter01 {
         FileHandling.createDataFilePath(prefectureDirList, subDirList);
         FileHandling.createBaseFileList(subDirList, GenericConstants.POPULATION_DIR_NAME, baseFileList);// str代入部分は後に配列から取得する
 
-        baseFileList.forEach(path -> {
+        baseFileList.forEach(pathArr -> {
 
-            for (int i = 0; i < path.length; i++) {
+            // 配列からパスを取得
+            for (File path: pathArr) {
 
-                // 一時退避リストに行文字列を代入
-                try (BufferedReader br = new BufferedReader(new FileReader(path[i]))) {
+                // 取得年度マップにキーを追加
+                layer1.put(parseInt(path.toString().split("_")[1].replace(".csv", "")), null);
+
+                // 一時退避リストにデータ文字列を代入
+                try (BufferedReader br = new BufferedReader(new FileReader(path))) {
 
                     String line = br.readLine();
                     inputRow.add(line.split(","));
@@ -73,24 +81,42 @@ class JSONConverter01 {
                     e.printStackTrace();
                 }
 
-                // ヘッダー行から削除列のインデックスを取得
-                for (int j = 0; j < inputRow.size(); j++) {
+                for (int i = 0; i < inputRow.size(); i++) {
 
-                    if (j == 0) {
-                        String[] row = inputRow.get(j);
-                        for(int k = 0; k < row.length; k++){
-                            if(row[k].contains("地域階層") || row[k].contains("総数")){
+                    // ヘッダー行から削除列のインデックスを取得
+                    if (i == 0) {
+
+                        String[] row = inputRow.get(i);
+                        for (int j = 0; j < row.length; j++) {
+
+                            for(String str: delkwcol){
+
+                                if(row[j].contains(str)){
+
+                                    deleteIndex.add(j);
+
+                                }
 
                             }
+
                         }
+
                     }
-                }
 
-                String str = path[i].toString();
-                if (i == 0 && str.contains("tokyo") && str.contains("Population")) {
+                    // 不要な列を削除
 
                 }
-            }
+
+                // String str = path.toString();
+                // if (i == 0 && str.contains("tokyo") && str.contains(GenericConstants.POPULATION_DIR_NAME)) {
+
+                // }
+            } // パス文字列操作END
         });
+    }
+
+    private static Integer parseInt(String replace) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'parseInt'");
     }
 }

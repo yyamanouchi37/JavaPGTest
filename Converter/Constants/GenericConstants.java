@@ -20,13 +20,10 @@ public class GenericConstants {
     // ログ出力切り替え用スイッチ
     public static final int LOG_PTN = 0;
 
-    // 東京人口ヘッダー行数
-    public static final int TPH_ROWCOUNT = 2;
-
-    // CSV配備ディレクトリ名
+    // CSV配備ルートディレクトリ名
     public static final String CSV_DIR_NAME = "Input";
 
-    // JSON配備ディレクトリ名
+    // JSON配備ルートディレクトリ名
     public static final String JSON_DIR_NAME = "Output";
 
     // 人口ディレクトリ名
