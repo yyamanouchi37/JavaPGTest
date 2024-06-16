@@ -5,11 +5,13 @@
 package Converter.FileHandling;
 
 import java.io.IOException;
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.Arrays;
 
 public class FileHandling {
 
@@ -21,7 +23,7 @@ public class FileHandling {
     }
 
     /*
-     * 入力ディレクトリ直下の情報を取得します。
+     * データディレクトリ直下の情報を取得します。
      *
      * @param dir 読み込みルートディレクトリ
      *
@@ -31,7 +33,7 @@ public class FileHandling {
      */
     public static void getChildlenData(Path dir, List<String> childDirs, List<String> names) {
 
-        // CSVディレクトリ配下のディレクトリ名を転写
+        // データディレクトリ直下のディレクトリ名を転写
         try (Stream<Path> stream = Files.list(Paths.get(dir.toString()))) {
 
             stream.forEach(subDir -> {
@@ -76,6 +78,74 @@ public class FileHandling {
                     System.out.println(e + "：ファイルの作成に失敗しました。");
 
                 }
+            }
+
+        });
+    }
+
+    /*
+     * データファイル取得元リストを生成
+     *
+     * @param input
+     *
+     * @param outputAll
+     *
+     * @param
+     *
+     * @param
+     */
+    public static void createDataFilePath(List<String> input, List<File[]> output) {
+        input.forEach(dir -> {
+
+            File file = new File(dir);
+            File[] subDir = file.listFiles();
+
+            if (subDir != null) {
+                output.add(subDir);
+            }
+
+        });
+    }
+
+    /*
+     * データファイル取得元リストを生成
+     *
+     * @param input
+     *
+     * @param outputAll
+     *
+     * @param
+     *
+     * @param
+     */
+    public static void createDataFilePath(String input, List<File[]> output) {
+
+            File file = new File(input);
+            File[] subDir = file.listFiles();
+
+            if (subDir != null) {
+                output.add(subDir);
+            }
+
+    }
+
+    /*
+     * 基準ファイルパスリストの作成
+     */
+    public static void createBaseFileList(List<File[]> input, String str, List<File[]> output) {
+
+        input.forEach(dir -> {
+
+            for (int i = 0; i < dir.length; i++) {
+
+                if (dir[i].toString().contains(str)) {
+
+                    File[] files = dir[i].listFiles();
+                    Arrays.sort(files);
+                    output.add(files);
+
+                }
+
             }
 
         });
