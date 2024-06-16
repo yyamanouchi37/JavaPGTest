@@ -7,12 +7,7 @@ package Converter.csvToJson;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
-import java.nio.file.Files;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -20,6 +15,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
@@ -53,8 +49,6 @@ class JSONConverter01 {
     private static LinkedHashMap<String, Integer> layer3sub = new LinkedHashMap<>();
     // CSV文字列一時退避リスト
     private static List<String[]> inputRow = new ArrayList<String[]>();
-    // 出力文字列リスト
-    private static List<String[]> outputRow = new ArrayList<String[]>();
     // 削除列キーワード
     private static String[] deleteKeyWord = { "地域階層", "総数", "総世帯数" };
     // ヘッダー行インデックス
@@ -63,8 +57,6 @@ class JSONConverter01 {
     private static LinkedHashMap<String, Integer> headerColumnIndex = new LinkedHashMap<>();
     // 削除列インデックス格納リスト
     private static List<Integer> deleteIndex = new ArrayList<Integer>();
-    // 削除後文字列リスト
-    private static List<String> afterRow = new ArrayList<String>();
 
     /*
      * CSVデータからJSONデータを作成します。
@@ -170,6 +162,8 @@ class JSONConverter01 {
                             layer3sub.put(l3Key, l3entry.getValue());
                         }
                     }
+
+                    layer2.put("自治体コード", row[1]);
                     layer2.put("日本人",layer3sub);
                     layer3sub.clear();
 
@@ -183,6 +177,7 @@ class JSONConverter01 {
                     layer2.put("外国人",layer3sub);
                     layer3sub.clear();
 
+                    layer1.put(row[2], layer2);
 
                 });
 
@@ -190,7 +185,7 @@ class JSONConverter01 {
                 inputRow.clear();
 
                 // 取得年度マップにキーを追加 ※後ろに移動
-                outputMap.put(Integer.valueOf(path.toString().split("_")[1].replace(".csv", "")), null);
+                outputMap.put(Integer.valueOf(path.toString().split("_")[1].replace(".csv", "")), layer1);
 
             } // パス文字列操作END
         });
@@ -199,8 +194,8 @@ class JSONConverter01 {
         // outputFileList.forEach(arr -> {
         // System.out.println(Arrays.toString(arr));
         // });
-        // for(int day: outputMap.keySet()){
-        // System.out.println(day);
+        // for(Entry<Integer, Object> entry: outputMap.entrySet()){
+        // System.out.println(entry);
         // }
     }
 
