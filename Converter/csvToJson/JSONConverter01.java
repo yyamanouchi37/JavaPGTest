@@ -13,9 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.LinkedHashMap;
 import java.util.TreeMap;
@@ -70,7 +68,7 @@ class JSONConverter01 {
 
         outputFileList.forEach(fileArr -> {
             // 配列からパスを取得（ファイル毎に処理を実行）
-            for(File path: fileArr) {
+            for (File path : fileArr) {
 
                 // 行を一時退避リストに代入
                 try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -98,7 +96,7 @@ class JSONConverter01 {
                         }
                     }
                     // 最下層レイヤーヘッダーインデックスの取得
-                    if (header[colIdx].contains("日本人")) {
+                    if (header[colIdx].contains("日本人") || header[colIdx].contains("住民基本台帳")) {
                         if (header[colIdx].contains("男")) {
                             headerColumnIndex.put("日本人/男", colIdx);
                         }
@@ -108,9 +106,12 @@ class JSONConverter01 {
                         if (header[colIdx].contains("世帯数")) {
                             headerColumnIndex.put("日本人/世帯数", colIdx);
                         }
+                        if (header[colIdx].contains("外国人のみ")) {
+                            headerColumnIndex.put("外国人総数", colIdx);
+                        }
                     }
 
-                    if (header[colIdx].contains("外国人")) {
+                    if (header[colIdx].contains("/外国人")) {
                         if (header[colIdx].contains("男")) {
                             headerColumnIndex.put("外国人/男", colIdx);
                         }
@@ -124,7 +125,11 @@ class JSONConverter01 {
                 }
 
                 // 出力用ハッシュマップの生成
-                inputRow.forEach(row -> {
+                for(int rowIndex = 6; rowIndex < inputRow.size() - 6; rowIndex++){
+                    String[] row = inputRow.get(rowIndex);
+                    if(row.length == 0 || row == null){
+                        continue;
+                    }
                     for (int colIdx = 0; colIdx < row.length; colIdx++) {
                         // 削除列をスキップ
                         for (int del : deleteIndex) {
@@ -132,54 +137,58 @@ class JSONConverter01 {
                                 continue;
                             }
                         }
+                        // null制御を追加
+                        Set <String> headerKeys = headerColumnIndex.keySet();
+                        String[] headerArr = headerKeys.toArray(new String[headerKeys.size()]);
+                        String headerStr = Arrays.toString(headerArr);
 
-                        if (colIdx == headerColumnIndex.get("日本人/男")) {
+                        if (headerStr.contains("日本人/男") && colIdx == headerColumnIndex.get("日本人/男")) {
                             layer3.put("日本人/男", Integer.valueOf(row[colIdx]));
                         }
-                        if (colIdx == headerColumnIndex.get("日本人/女")) {
+                        if (headerStr.contains("日本人/女") && colIdx == headerColumnIndex.get("日本人/女")) {
                             layer3.put("日本人/女", Integer.valueOf(row[colIdx]));
                         }
-                        if (colIdx == headerColumnIndex.get("日本人/世帯数")) {
+                        if (headerStr.contains("日本人/世帯数") && colIdx == headerColumnIndex.get("日本人/世帯数")) {
                             layer3.put("日本人/世帯数", Integer.valueOf(row[colIdx]));
                         }
-                        if (colIdx == headerColumnIndex.get("外国人/男")) {
+                        if (headerStr.contains("外国人/男") && colIdx == headerColumnIndex.get("外国人/男")) {
                             layer3.put("外国人/男", Integer.valueOf(row[colIdx]));
                         }
-                        if (colIdx == headerColumnIndex.get("外国人/女")) {
+                        if (headerStr.contains("外国人/女") && colIdx == headerColumnIndex.get("外国人/女")) {
                             layer3.put("外国人/女", Integer.valueOf(row[colIdx]));
                         }
-                        if (colIdx == headerColumnIndex.get("外国人/世帯数")) {
+                        if (headerStr.contains("外国人/世帯数") && colIdx == headerColumnIndex.get("外国人/世帯数")) {
                             layer3.put("外国人/世帯数", Integer.valueOf(row[colIdx]));
                         }
                     }
 
                     // 最下層マップを加工してLayer2に代入
                     Set<Map.Entry<String, Integer>> l3entries = layer3.entrySet();
-                    for(Map.Entry<String, Integer> l3entry: l3entries){
+                    for (Map.Entry<String, Integer> l3entry : l3entries) {
                         // layer2:日本人
-                        if(l3entry.getKey().contains("日本人")){
+                        if (l3entry.getKey().contains("日本人")) {
                             String l3Key = l3entry.getKey().split("/")[1];
                             layer3sub.put(l3Key, l3entry.getValue());
                         }
                     }
 
                     layer2.put("自治体コード", row[1]);
-                    layer2.put("日本人",layer3sub);
+                    layer2.put("日本人", layer3sub);
                     layer3sub.clear();
 
-                    for(Map.Entry<String, Integer> l3entry: l3entries){
+                    for (Map.Entry<String, Integer> l3entry : l3entries) {
                         // layer2:外国人
-                        if(l3entry.getKey().contains("外国人")){
+                        if (l3entry.getKey().contains("外国人")) {
                             String l3Key = l3entry.getKey().split("/")[1];
                             layer3sub.put(l3Key, l3entry.getValue());
                         }
                     }
-                    layer2.put("外国人",layer3sub);
+                    layer2.put("外国人", layer3sub);
                     layer3sub.clear();
 
                     layer1.put(row[2], layer2);
 
-                });
+                }
 
                 System.out.println(inputRow.size());// デバッグ
                 inputRow.clear();
