@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Stream;
+import java.util.Arrays;
 
 public class FileHandling {
 
@@ -93,17 +94,39 @@ public class FileHandling {
      *
      * @param
      */
-    public static void createDataFilePath(List<String> input, List<File[]> outputAll) {
+    public static void createDataFilePath(List<String> input, List<File[]> output) {
         input.forEach(dir -> {
 
             File file = new File(dir);
             File[] subDir = file.listFiles();
 
             if (subDir != null) {
-                outputAll.add(subDir);
+                output.add(subDir);
             }
 
         });
+    }
+
+    /*
+     * データファイル取得元リストを生成
+     *
+     * @param input
+     *
+     * @param outputAll
+     *
+     * @param
+     *
+     * @param
+     */
+    public static void createDataFilePath(String input, List<File[]> output) {
+
+            File file = new File(input);
+            File[] subDir = file.listFiles();
+
+            if (subDir != null) {
+                output.add(subDir);
+            }
+
     }
 
     /*
@@ -118,6 +141,7 @@ public class FileHandling {
                 if (dir[i].toString().contains(str)) {
 
                     File[] files = dir[i].listFiles();
+                    Arrays.sort(files);
                     output.add(files);
 
                 }
